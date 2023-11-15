@@ -173,7 +173,7 @@ export async function updateTodoLists(token, username, id, title) {
       if (jsonResponse.errors != null) {
         throw jsonResponse.errors[0]
       }
-      return jsonResponse.data.deleteTodoLists
+      return jsonResponse.data.updateTodoLists
     })
     .catch(error => {
       throw error
