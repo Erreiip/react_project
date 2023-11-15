@@ -29,7 +29,11 @@ export default function TodoListScreen ({ navigation, route }) {
     }, [data])
 
     const updateTodoList = () => {
-        getTodoLists(token, username).then((res) => setData(res))
+        getTodoLists(token, username).then((res) => {
+            console.log(res);
+            setData(res)
+            // for (let i = 0; i < res.length; i++) {deleteTodoLists(token, username, res[i].id)}
+        })
     }
 
     const updateTodoItem = () => {

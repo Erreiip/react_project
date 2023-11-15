@@ -4,7 +4,7 @@ import { TextInput, FlatList, StyleSheet, Text, View, Button } from 'react-nativ
 
 import { TokenContext, UsernameContext } from '../context/Context'
 
-import { getItemsByID, getAllItems } from '../components/TodoItem'
+import { getItemsByID, getAllItems, createTodoInList, updateTodoItem } from '../components/TodoItem'
 
 import TodoItem from '../components/UI/TodoItemView'
 import Input from '../components/UI/Input'
@@ -13,170 +13,179 @@ import TaskView from '../components/UI/TaskView'
 import { styles, header } from '../components/style/style'
 
 export default function TodoItemsScreen({ navigation, route }) {
-  
-  const [username, setUsername] = useContext(UsernameContext)
-  const [token, setToken] = useContext(TokenContext)
 
-  const id = route.params.id
+	const [username, setUsername] = useContext(UsernameContext)
+	const [token, setToken] = useContext(TokenContext)
 
-  const [todos, setTodos] = useState([])
+	const id = route.params.id
 
-  useEffect(() => {
-    updateTodoItems()
-    setNumberTodo(todos.filter((item)=>item.done).length)
-  }, [])
+	const [todos, setTodos] = useState([])
 
-  const updateTodoItems = () => {
-    getItemsByID(token, username, id).then((res)=> setTodos(res))
-  }
+	useEffect(() => {
+		updateTodoItems()
+		setNumberTodo(todos.filter((item)=>item.done).length)
+	}, [])
 
-  // DISPLAY FUNCTION
-  const displayAll = () => {
-    setMode(MODE_ALL)
-  }
+	const updateTodoItems = () => {
 
-  const displayInProgress = () => {
-    setMode(MODE_ENCOURS)
-  }
+		getItemsByID(token, id).then((data) => {
+			setTodos(data)
+		})
+	}
 
-  const displayFinish = () => {
-    setMode(MODE_FINIS)
-  }
+	// DISPLAY FUNCTION
+	const displayAll = () => {
+		setMode(MODE_ALL)
+	}
 
-  //BUTTONS DATA
-  const buttonsData = [
-    {
-        content: "Tous",
-        callBack: displayAll
-    },
-    {
-        content: "En cours",
-        callBack: displayInProgress
-    },
-    {
-        content: "Finito",
-        callBack: displayFinish
-    },
-    {
-        content: "Tout cocher",
-        callBack: checkAll
-    },
-    {
-        content: "Tout décocher",
-        callBack: uncheckAll
-    }
-  ]
+	const displayInProgress = () => {
+		setMode(MODE_ENCOURS)
+	}
 
-  //CHECKALL
-  const checkAll = () => {
-    let temp = todos.map(item => {return {id: item.id, content: item.content, done: true }});
-    setTodos(temp)
-    setNumberTodo(temp.length)
-  }
+	const displayFinish = () => {
+		setMode(MODE_FINIS)
+	}
 
-  const uncheckAll = () => {
-    let temp = todos.map(item => {return {id: item.id, content: item.content, done: false }})
-    setTodos(temp)
-    setNumberTodo(0)
-  }
+	//BUTTONS DATA
+	const buttonsData = [
+		{
+			content: "Tous",
+			callBack: displayAll
+		},
+		{
+			content: "En cours",
+			callBack: displayInProgress
+		},
+		{
+			content: "Finito",
+			callBack: displayFinish
+		},
+		{
+			content: "Tout cocher",
+			callBack: checkAll
+		},
+		{
+			content: "Tout décocher",
+			callBack: uncheckAll
+		}
+	]
 
-  //MODE
-  const MODE_ALL = 'All'
-  const MODE_ENCOURS = 'Encours'
-  const MODE_FINIS = 'Finis'
-  const [mode, setMode] = useState(MODE_ALL)
+	//CHECKALL
+	const checkAll = () => {
+		let temp = todos.map(item => {return {id: item.id, content: item.content, done: true }});
+		setTodos(temp)
+		setNumberTodo(temp.length)
+	}
 
-  // NUMBER OF TODOS
-  const [numberTodo, setNumberTodo] = useState(0)
+	const uncheckAll = () => {
+		let temp = todos.map(item => {return {id: item.id, content: item.content, done: false }})
+		setTodos(temp)
+		setNumberTodo(0)
+	}
 
-  const setCountTodo = (done) => {
-    setNumberTodo( numberTodo + (done ? -1 : 1))
-  }
+	//MODE
+	const MODE_ALL = 'All'
+	const MODE_ENCOURS = 'Encours'
+	const MODE_FINIS = 'Finis'
+	const [mode, setMode] = useState(MODE_ALL)
 
-  // DELETE TO DO
-  const deleteTodo = (id) => {
-    let todosArray = todos.filter(item => item.id != id)
+	// NUMBER OF TODOS
+	const [numberTodo, setNumberTodo] = useState(0)
 
-    setTodos(todosArray)
-    setNumberTodo(todosArray.filter((item)=>item.done).length)
-  }
+	const setCountTodo = (done) => {
+		setNumberTodo( numberTodo + (done ? -1 : 1))
+	}
 
-  //CHANGE SWITCH
-  const changeSwitch = (id) => {
-    let todosArray = todos.filter(item => {
-      if (item.id != id) return item;
-      else
-      {
-        item.done = !item.done
-        return item
-      }
-    })
+	// DELETE TO DO
+	const deleteTodo = (id) => {
+		let todosArray = todos.filter(item => item.id != id)
 
-    setTodos(todosArray)
-  }
+		setTodos(todosArray)
+		setNumberTodo(todosArray.filter((item)=>item.done).length)
+	}
 
-  // ADD TO DO
-  const addNewTodo = (title) => {
-    let todosTmp = todos
+	//CHANGE SWITCH
+	const changeSwitch = (id) => {
+		let todosArray = todos.filter(item => {
+		if (item.id != id) return item;
+		else
+		{
+			item.done = !item.done
+			return item
+		}
+		})
 
-    todosTmp.push(
-      {
-        id: todos.length + 1,
-        content: title,
-        done: false
-      }
-    )
+		setTodos(todosArray)
+	}
 
-    setTodos(todosTmp)
-  }
+	// ADD TO DO
+	const addNewTodo = (title) => {
 
-  const emptyList = () => {
-    return (
-      <Text>Aucune tâches</Text>
-    )
-  }
+		createTodoInList(token, username, id, title, false).then((data) => {
+			updateTodoItems()
+		})
+	}
 
-  const taskView = () => {
-    if ( todos.length != 0 && mode == MODE_ALL )
-    return(
-      <TaskView array={todos}/>
-    )
-  }
+	const emptyList = () => {
 
-  const itemVisible = (item) => {
-    let ret = <TodoItem item={item} setCountTodo={setCountTodo} deleteTodo={deleteTodo} changeSwitch={changeSwitch}/>
-    if ( mode == MODE_ALL     ) { return ret }
-    if ( mode == MODE_ENCOURS && !item.done) { return ret }
-    if ( mode == MODE_FINIS   &&  item.done) { return ret }
-  }
+		return (
+			<Text>Aucune tâches</Text>
+		)
+	}
 
-  let pourcent = (numberTodo * 1.0)/todos.length
-  if ( numberTodo == 0 || todos.length == 0) pourcent = 0
-  
-  let numColumns = Math.ceil(buttonsData.length/2)
-  return (
-    <View style={styles.container}>
-      <FlatList
-          numColumns={numColumns}
-          data={buttonsData}
-          columnWrapperStyle={() => <View style={{width: 10}} />}
-          ItemSeparatorComponent={() => <View style={{height: 10}} />}
-          renderItem={({item}) => 
-            <Button
-              title={item.content}
-              onPress={item.callBack}
-            />
-          } 
-      />
-      <FlatList
-            ListEmptyComponent={emptyList}
-            data={todos}
-            renderItem={({item}) => itemVisible(item)} 
-      />
+	const taskView = () => {
 
-      {taskView()}
+		if ( todos.length != 0 && mode == MODE_ALL ) {
 
-      <Input callBack={addNewTodo} title="ajouter"/>
-    </View>
-  )
+			return(
+				<TaskView array={todos}/>
+			)
+		}
+	}
+
+	const itemVisible = (item) => {
+
+		let ret = <TodoItem item={item} setCountTodo={setCountTodo} deleteTodo={deleteTodo} changeSwitch={changeSwitch} 
+		doneUpdateCallback={() => {
+
+			updateTodoItem(token, username, item.id, item.done).then((data) => {
+				console.log(data);
+				updateTodoItems()
+			})
+		}}/>
+
+		if ( mode == MODE_ALL     ) { return ret }
+		if ( mode == MODE_ENCOURS && !item.done) { return ret }
+		if ( mode == MODE_FINIS   &&  item.done) { return ret }
+	}
+
+	let pourcent = (numberTodo * 1.0)/todos.length
+	if ( numberTodo == 0 || todos.length == 0) pourcent = 0
+
+	let numColumns = Math.ceil(buttonsData.length/2)
+	return (
+		<View style={styles.container}>
+		<FlatList
+			numColumns={numColumns}
+			data={buttonsData}
+			columnWrapperStyle={() => <View style={{width: 10}} />}
+			ItemSeparatorComponent={() => <View style={{height: 10}} />}
+			renderItem={({item}) => 
+				<Button
+				title={item.content}
+				onPress={item.callBack}
+				/>
+			} 
+		/>
+		<FlatList
+				ListEmptyComponent={emptyList}
+				data={todos}
+				renderItem={({item}) => itemVisible(item)} 
+		/>
+
+		{taskView()}
+
+		<Input callBack={addNewTodo} title="ajouter"/>
+		</View>
+	)
 }

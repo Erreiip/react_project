@@ -8,6 +8,7 @@ export default function TodoItem(props){
         props.changeSwitch(props.item.id)
         onToogled(!done);
         props.setCountTodo(done);
+        props.doneUpdateCallback()
     }
 
     useEffect(() => {

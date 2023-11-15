@@ -45,56 +45,46 @@ export function getAllItems(token, username) {
 }
 
 
-const Q_TODO_ITEM_ID = `
-query Todos($where: TodoWhere, $belongsToWhere2: TodoListWhere) {
+const Q_TODO =
+`
+query Query($where: TodoWhere) {
     todos(where: $where) {
-      done
-      content
-      belongsTo(where: $belongsToWhere2) {
         id
-      }
+        content
+        done
     }
-  }
+}
 `
 
-export async function getItemsByID(token, username, id) {
-    let promise = fetch(API_URL, {
-            method: 'POST',
-            headers: getHeader(token),
-            body: JSON.stringify({
-                query: Q_TODO_ITEM_ID,
-                variables: {
-                    where: {
-                        belongsTo: {
-                        owner: {
-                            username: username
-                        }
-                        }
-                    },
-                    belongsToWhere2: {
+export function getItemsByID(token, id) {
+
+    return fetch(API_URL, {
+
+        method: 'POST',
+        headers: getHeader(token),
+        body: JSON.stringify({
+            query: Q_TODO,
+            variables: {
+                where: {
+                    belongsTo: {
                         id: id
                     }
                 }
-            })
+              }
         })
-        .then(response => {
-
-            return response.json()
-        })
-    
-    let response = promise.then(jsonResponse => {
-
+    })
+    .then(response => {
+        return response.json()
+    })
+    .then(jsonResponse => {
         if (jsonResponse.errors != null) {
-            throw jsonResponse.errors[0]
+        throw jsonResponse.errors[0]
         }
         return jsonResponse.data.todos
     })
     .catch(error => {
-
         throw error
     })
-
-    return await response
 }
 
 const C_TODO_ITEM_AND_LIST = `
@@ -149,6 +139,121 @@ export function createItemAndList(token, username, content, done, title) {
     })
     .catch(error => {
 
+        throw error
+    })
+}
+
+const C_TODO =
+`
+mutation Mutation($input: [TodoCreateInput!]!) {
+    createTodos(input: $input) {
+        todos {
+            id
+        }
+    }
+}
+`
+
+export function createTodoInList(token, username, listId, content, done) {
+
+    return fetch(API_URL, {
+
+        method: 'POST',
+        headers: getHeader(token),
+        body: JSON.stringify({
+            query: C_TODO,
+            variables: {
+                input: [
+                    {
+                        content: content,
+                        done: done,
+                        belongsTo: {
+                            connect: {
+                                where: {
+                                    id: listId
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+    })
+    .then(response => {
+            
+        return response.json()
+    })
+    .then(jsonResponse => {
+
+        if (jsonResponse.errors != null) {
+            throw jsonResponse.errors[0]
+        }
+        return jsonResponse.data.todos
+    })
+    .catch(error => {
+            
+        throw error
+    })
+}
+
+const U_TODO =
+`
+mutation Mutation($where: TodoWhere, $update: TodoUpdateInput, $connect: TodoConnectInput) {
+    updateTodos(where: $where, update: $update, connect: $connect) {
+        todos {
+            id
+        }
+    }
+}
+`
+
+export function updateTodoItem(token, username, id, done) {
+
+    return fetch(API_URL, {
+
+        method: 'POST',
+        headers: getHeader(token),
+        body: JSON.stringify({
+            query: U_TODO,
+            variables: {
+                where: {
+                    id: id,
+                    belongsTo: {
+                        owner: {
+                            username: username
+                        }
+                    }
+                },
+                update: {
+                    done: done
+                },
+                connect: {
+                    belongsTo: {
+                        connect: {
+                            owner: {
+                                where: {
+                                    username: username
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    })
+    .then(response => {
+            
+        return response.json()
+    })
+    .then(jsonResponse => {
+
+        if (jsonResponse.errors != null) {
+            throw jsonResponse.errors[0]
+        }
+        return jsonResponse.data.todos
+    })
+    .catch(error => {
+            
         throw error
     })
 }
