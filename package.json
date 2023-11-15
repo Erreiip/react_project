@@ -26,5 +26,8 @@
     "react-native-screens": "~3.22.0",
     "react-native-web": "^0.19.8"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "cypress": "^13.5.1"
+  }
 }

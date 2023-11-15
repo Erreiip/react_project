@@ -31,6 +31,15 @@ const D_TODO_LIST =
     }
     `
 
+const U_TODO_LIST = 
+    `mutation Mutation($where: TodoListWhere, $update: TodoListUpdateInput, $connect: TodoListConnectInput) {
+        updateTodoLists(where: $where, update: $update, connect: $connect) {
+            todoLists {
+            id
+        }
+        }
+    }
+`
 export function createTodoLists(token, username, title) {
 
     return fetch(API_URL, {
@@ -115,6 +124,46 @@ export function deleteTodoLists(token, username, id) {
                     id: id
                 }
             } 
+        })
+    })
+    .then(response => {
+      return response.json()
+    })
+    .then(jsonResponse => {
+      if (jsonResponse.errors != null) {
+        throw jsonResponse.errors[0]
+      }
+      return jsonResponse.data.deleteTodoLists
+    })
+    .catch(error => {
+      throw error
+    })
+}
+
+export async function updateTodoLists(token, username, id, title) {
+    return fetch(API_URL, {
+        method: 'POST',
+        headers: getHeader(token),
+        body: JSON.stringify({
+            query: U_TODO_LIST,
+            variables: {
+                where: {
+                  id: id,
+                  owner: {
+                    username: username
+                  }
+                },
+                update: {
+                  title: title
+                },
+                connect: {
+                  owner: {
+                    where: {
+                      username: username
+                    }
+                  }
+                }
+              }
         })
     })
     .then(response => {

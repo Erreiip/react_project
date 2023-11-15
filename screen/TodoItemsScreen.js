@@ -145,14 +145,7 @@ export default function TodoItemsScreen({ navigation, route }) {
 
 	const itemVisible = (item) => {
 
-		let ret = <TodoItem item={item} setCountTodo={setCountTodo} deleteTodo={deleteTodo} changeSwitch={changeSwitch} 
-		doneUpdateCallback={() => {
-
-			updateTodoItem(token, username, item.id, item.done).then((data) => {
-				console.log(data);
-				updateTodoItems()
-			})
-		}}/>
+		let ret = <TodoItem item={item} setCountTodo={setCountTodo} deleteTodo={deleteTodo} changeSwitch={changeSwitch} />
 
 		if ( mode == MODE_ALL     ) { return ret }
 		if ( mode == MODE_ENCOURS && !item.done) { return ret }

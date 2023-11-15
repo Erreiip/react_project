@@ -3,7 +3,7 @@ import { StatusBar, TextInput, Button, TouchableOpacity, Image, Text, View, Styl
 
 import { TokenContext, UsernameContext } from '../context/Context';
 
-import { deleteTodoLists, getTodoLists, createTodoLists } from '../components/TodoList'
+import { deleteTodoLists, getTodoLists, createTodoLists, updateTodoLists } from '../components/TodoList'
 
 import Input from '../components/UI/Input';
 import TodoListView from '../components/UI/TodoListView';
@@ -30,9 +30,14 @@ export default function TodoListScreen ({ navigation, route }) {
 
     const updateTodoList = () => {
         getTodoLists(token, username).then((res) => {
-            console.log(res);
             setData(res)
             // for (let i = 0; i < res.length; i++) {deleteTodoLists(token, username, res[i].id)}
+        })
+    }
+
+    const updateTodoListsName = (id, title) => {
+        updateTodoLists(token, username, id, title).then(() => {
+            updateTodoList()
         })
     }
 
@@ -74,7 +79,7 @@ export default function TodoListScreen ({ navigation, route }) {
             <FlatList
                 ListEmptyComponent={emptyList}
                 data={data}
-                renderItem={({item}) => <TodoListView item={item} callBack={deleteTodoList} navigate={navigateItems}/>}
+                renderItem={({item}) => <TodoListView item={item} callBack={deleteTodoList} modalCallBack={updateTodoListsName} navigate={navigateItems}/>}
             />
 
             {taskView()}
