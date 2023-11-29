@@ -207,7 +207,13 @@ mutation Mutation($where: TodoWhere, $update: TodoUpdateInput, $connect: TodoCon
 }
 `
 
-export function updateTodoItem(token, username, id, done) {
+export function updateTodoItem_LA_LEGENDE(token, username, listId, itemId, done) {
+
+    console.log(token);
+    console.log(username);
+    console.log(listId);
+    console.log(itemId);
+    console.log(done);
 
     return fetch(API_URL, {
 
@@ -217,11 +223,12 @@ export function updateTodoItem(token, username, id, done) {
             query: U_TODO,
             variables: {
                 where: {
-                    id: id,
+                    id: itemId,
                     belongsTo: {
                         owner: {
                             username: username
-                        }
+                        },
+                        id: listId
                     }
                 },
                 update: {
@@ -255,5 +262,70 @@ export function updateTodoItem(token, username, id, done) {
     .catch(error => {
             
         throw error
+    })
+}
+
+export function updateTodoItem(token, username, listId, itemId, done) {
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: getHeader(token),
+      body: JSON.stringify({
+        query: U_TODO,
+        variables: {
+          "where": {
+            "id": itemId
+          },
+          "update": {
+            "done": done
+          }
+        }
+      })
+    })
+    .then(response => {
+    return response.json()
+    })
+    .then(jsonResponse => {
+    if (jsonResponse.errors != null) {
+        throw jsonResponse.errors[0]
+    }
+    return jsonResponse.data.updateTodos.todos[0]
+    })
+    .catch(error => {
+        console.log('error API', error.message)
+    throw error
+    })
+}
+
+const D_TODO = `
+mutation($id: ID!) {
+  deleteTodos(where: { id: $id }) {
+    nodesDeleted
+  }
+}
+`
+
+export function deleteTodoItem(id, token) {
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: getHeader(token),
+    body: JSON.stringify({
+      query: D_TODO,
+      variables: {
+        id: id
+      }
+    })
+  })
+    .then(response => {
+      return response.json()
+    })
+    .then(jsonResponse => {
+      if (jsonResponse.errors != null) {
+        throw jsonResponse.errors[0]
+      }
+      return jsonResponse.data.deleteTodos.nodesDeleted
+    })
+    .catch(error => {
+        console.log('error API', error.message)
+      throw error
     })
 }

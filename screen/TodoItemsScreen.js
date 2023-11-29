@@ -4,7 +4,7 @@ import { TextInput, FlatList, StyleSheet, Text, View, Button } from 'react-nativ
 
 import { TokenContext, UsernameContext } from '../context/Context'
 
-import { getItemsByID, getAllItems, createTodoInList, updateTodoItem } from '../components/TodoItem'
+import { getItemsByID, getAllItems, createTodoInList, updateTodoItem, deleteTodoItem } from '../components/TodoItem'
 
 import TodoItem from '../components/UI/TodoItemView'
 import Input from '../components/UI/Input'
@@ -98,24 +98,19 @@ export default function TodoItemsScreen({ navigation, route }) {
 
 	// DELETE TO DO
 	const deleteTodo = (id) => {
-		let todosArray = todos.filter(item => item.id != id)
-
-		setTodos(todosArray)
-		setNumberTodo(todosArray.filter((item)=>item.done).length)
+		
+		deleteTodoItem(id, token).then((data) => {
+			updateTodoItems()
+		})
 	}
 
 	//CHANGE SWITCH
-	const changeSwitch = (id) => {
-		let todosArray = todos.filter(item => {
-		if (item.id != id) return item;
-		else
-		{
-			item.done = !item.done
-			return item
-		}
-		})
+	const changeSwitch = (item) => {
 
-		setTodos(todosArray)
+		updateTodoItem(token, username, id, item.id, !item.done).then((data) => {
+			console.log(data);
+			updateTodoItems()
+		})
 	}
 
 	// ADD TO DO
@@ -145,7 +140,7 @@ export default function TodoItemsScreen({ navigation, route }) {
 
 	const itemVisible = (item) => {
 
-		let ret = <TodoItem item={item} setCountTodo={setCountTodo} deleteTodo={deleteTodo} changeSwitch={changeSwitch} />
+		let ret = <TodoItem item={item} setCountTodo={setCountTodo} deleteTodo={deleteTodo} changeSwitch={changeSwitch}/>
 
 		if ( mode == MODE_ALL     ) { return ret }
 		if ( mode == MODE_ENCOURS && !item.done) { return ret }

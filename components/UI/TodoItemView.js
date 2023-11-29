@@ -5,7 +5,7 @@ export default function TodoItem(props){
 
     const [done, onToogled] = useState(props.item.done);
     const toggleSwitch = () => {
-        props.changeSwitch(props.item.id)
+        props.changeSwitch(props.item)
         onToogled(!done);
         props.setCountTodo(done);
     }
