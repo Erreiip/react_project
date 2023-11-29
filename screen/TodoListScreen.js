@@ -77,10 +77,13 @@ export default function TodoListScreen ({ navigation, route }) {
     return (
         <View style={styles.container}>
             <FlatList
+                style={StyleTodoListScreen.flatList}
+                // contentContainerStyle={StyleTodoListScreen.flatListContainerStyle}
                 ListEmptyComponent={emptyList}
                 data={data}
                 renderItem={({item}) => <TodoListView item={item} callBack={deleteTodoList} modalCallBack={updateTodoListsName} navigate={navigateItems}/>}
             />
+            
 
             {taskView()}
 
@@ -89,3 +92,14 @@ export default function TodoListScreen ({ navigation, route }) {
     )
 }
 
+const StyleTodoListScreen = StyleSheet.create({
+
+    flatList: {
+
+        width: "100%",
+    },
+    flatListContainerStyle: {
+
+        // alignItems: 'center',
+    },
+})

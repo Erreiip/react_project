@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
 export const stylesTDL = StyleSheet.create({
 	container: {
 		flex: 2,
-        flexDirection: 'row',
+    flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},

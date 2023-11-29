@@ -58,22 +58,65 @@ export default function TodoListView (props) {
     }
 
     return (
-        <View style={stylesTDL.container}>
-            {modal()}
-            <TouchableOpacity
+        <TouchableOpacity
                 onPress={() => props.navigate(props.item.id)}
                 onLongPress={changeModalState}
             >
-                <Text>{props.item.title}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                onPress={() => props.callBack(props.item.id)}
-            >
-                <Image 
-                    source={require('../../assets/trash.png')} 
-                    style={stylesTDL.logo}
-                />
-            </TouchableOpacity>
-        </View>
+            <View style={StyleTodoListView.todoListContainer}>
+                {modal()}
+                <Text style={StyleTodoListView.todoListText}>{props.item.title}</Text>
+                <TouchableOpacity
+                    onPress={() => props.callBack(props.item.id)}
+                    style={StyleTodoListView.trashIconPosition}
+                >
+                    <Image 
+                        source={require('../../assets/trash.png')}
+                        style={StyleTodoListView.trashIcon}
+                    />
+                </TouchableOpacity>
+            </View>
+        </TouchableOpacity>
     )
 }
+
+const TODO_LIST_HEIGHT = 50;
+const TODO_LIST_PADDING = 10;
+
+const StyleTodoListView = StyleSheet.create({
+
+    todoListContainer: {
+
+        width: '90%',
+        height: TODO_LIST_HEIGHT,
+        flexDirection: 'row',
+
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 10,
+
+        alignSelf: 'center',
+
+        padding: 10,
+        marginTop: 10,
+    },
+    trashIconPosition: {
+
+        position: 'absolute',
+        right: 10,
+    },
+    trashIcon: {
+
+        height: TODO_LIST_HEIGHT - (TODO_LIST_PADDING * 2),
+        width: TODO_LIST_HEIGHT - (TODO_LIST_PADDING * 2),
+
+        backgroundColor : 'red',
+        borderRadius: 10,
+
+
+    },
+    todoListText: {
+
+        fontSize: 20,
+
+    },  
+})

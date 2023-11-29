@@ -151,6 +151,15 @@ export default function TodoItemsScreen({ navigation, route }) {
 	if ( numberTodo == 0 || todos.length == 0) pourcent = 0
 
 	let numColumns = Math.ceil(buttonsData.length/2)
+
+	const exportJSON = () => {
+
+		getAllItems(token, username).then((data) => {
+
+			console.log(data);
+		})
+	}
+
 	return (
 		<View style={styles.container}>
 		<FlatList
@@ -174,6 +183,7 @@ export default function TodoItemsScreen({ navigation, route }) {
 		{taskView()}
 
 		<Input callBack={addNewTodo} title="ajouter"/>
+		<Button title='Exporter au format JSON' onPress={() => exportJSON()}/>
 		</View>
 	)
 }

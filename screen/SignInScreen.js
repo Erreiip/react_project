@@ -115,16 +115,35 @@ export default function SignInScreen ({ navigation }) {
 
                                                         updateTodoItem(sheshToken, randomString, listId, itemId, true).then(
                                                             (res) => {
-                                                                getTodoLists(sheshToken, randomString).then(
-                                                                    (res) => {
-                                                                        
-                                                                        res.forEach(element => {
-                                                                            deleteTodoLists(sheshToken, randomString, element.id)
-                                                                        });
+                                                                
+                                                                let bool = true
+                                                                let i = 0
 
-                                                                        alert("J'ai supprimé les listes")
+                                                                let nextRequest = false
+
+                                                                while (bool) {
+
+                                                                    if (!nextRequest) {
+                                                                        nextRequest = true
+                                                                        getTodoLists(sheshToken, randomString).then(
+                                                                            (res) => {
+
+                                                                                if (res.length == 0) {
+                                                                                    bool = false
+                                                                                }
+                                                                                res.forEach(element => {
+                                                                                    deleteTodoLists(sheshToken, randomString, element.id)
+                                                                                    i++
+                                                                                    if (i % 1000 == 0) {
+                                                                                        
+                                                                                        console.log(i);
+                                                                                    }
+                                                                                });
+                                                                                nextRequest = false
+                                                                            }
+                                                                        )
                                                                     }
-                                                                )
+                                                                }
                                                             }
                                                         )
                                                     }
