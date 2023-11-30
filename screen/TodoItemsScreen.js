@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { TextInput, FlatList, StyleSheet, Text, View, Button } from 'react-native'
+import { TextInput, FlatList, StyleSheet, Text, View, Button, Clipboard } from 'react-native'
 
 import { TokenContext, UsernameContext } from '../context/Context'
 
 import { getItemsByID, getAllItems, createTodoInList, updateTodoItem, deleteTodoItem } from '../components/TodoItem'
+import { getTodoLists } from '../components/TodoList'
 
 import TodoItem from '../components/UI/TodoItemView'
 import Input from '../components/UI/Input'
@@ -62,22 +63,36 @@ export default function TodoItemsScreen({ navigation, route }) {
 		},
 		{
 			content: "Tout cocher",
-			callBack: checkAll
+			callBack: () => {
+		
+				let temp = todos.filter((item)=>!item.done)
+		
+				for (let i = 0; i < temp.length; i++) {
+					updateTodoItem(token, username, id, temp[i].id, true).then((data) => {
+						updateTodoItems()
+					})
+				}
+			}
 		},
 		{
 			content: "Tout décocher",
-			callBack: uncheckAll
+			callBack: () => {
+		
+				let temp = todos.filter((item)=>item.done)
+		
+				for (let i = 0; i < temp.length; i++) {
+					updateTodoItem(token, username, id, temp[i].id, false).then((data) => {
+						updateTodoItems()
+					})
+				}
+			}
 		}
 	]
 
-	//CHECKALL
-	const checkAll = () => {
-		let temp = todos.map(item => {return {id: item.id, content: item.content, done: true }});
-		setTodos(temp)
-		setNumberTodo(temp.length)
-	}
-
 	const uncheckAll = () => {
+
+		console.log("Uncheck");
+
 		let temp = todos.map(item => {return {id: item.id, content: item.content, done: false }})
 		setTodos(temp)
 		setNumberTodo(0)
@@ -156,7 +171,25 @@ export default function TodoItemsScreen({ navigation, route }) {
 
 		getAllItems(token, username).then((data) => {
 
-			console.log(data);
+			getTodoLists(token, username).then((data2) => {
+
+				let title = data2.filter((item)=>item.id == id)[0].title
+
+				let json = {
+					title: title,
+					items: data.map((item) => {
+						return {
+							content: item.content,
+							done: item.done
+						}
+					})
+				}
+
+				let string = JSON.stringify(json)
+
+				// Clipboard
+				Clipboard.setString(string)
+			})
 		})
 	}
 
@@ -169,8 +202,8 @@ export default function TodoItemsScreen({ navigation, route }) {
 			ItemSeparatorComponent={() => <View style={{height: 10}} />}
 			renderItem={({item}) => 
 				<Button
-				title={item.content}
-				onPress={item.callBack}
+					title={item.content}
+					onPress={() => {item.callBack()}}
 				/>
 			} 
 		/>
