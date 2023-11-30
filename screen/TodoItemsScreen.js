@@ -139,7 +139,9 @@ export default function TodoItemsScreen({ navigation, route }) {
 	const emptyList = () => {
 
 		return (
-			<Text>Aucune tâches</Text>
+			<View style={styles.centerContent}>
+				<Text>Aucune tâches</Text>
+			</View>
 		)
 	}
 
@@ -208,6 +210,7 @@ export default function TodoItemsScreen({ navigation, route }) {
 			} 
 		/>
 		<FlatList
+				style={{width:'90%'}}
 				ListEmptyComponent={emptyList}
 				data={todos}
 				renderItem={({item}) => itemVisible(item)} 

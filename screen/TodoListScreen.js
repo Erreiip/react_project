@@ -12,6 +12,7 @@ import TaskView from '../components/UI/TaskView';
 import { getAllItems } from '../components/TodoItem';
 
 import { styles, header } from '../components/style/style';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function TodoListScreen ({ navigation, route }) {
     
@@ -28,6 +29,10 @@ export default function TodoListScreen ({ navigation, route }) {
     useEffect(() => {
         updateTodoItem()
     }, [data])
+
+    useFocusEffect(() => {
+        updateTodoItem()
+    })
 
     const updateTodoList = () => {
         getTodoLists(token, username).then((res) => {
@@ -63,10 +68,12 @@ export default function TodoListScreen ({ navigation, route }) {
     }
 
     const emptyList = () => {
-		return (
-		<Text>Aucune Liste</Text>
-		)
-	}
+        return (
+            <View style={styles.centerContent}>
+                <Text>Aucune Liste</Text>
+            </View>
+        )
+      }
     
 	const taskView = () => {
 		if ( todos.length != 0)
@@ -101,7 +108,6 @@ export default function TodoListScreen ({ navigation, route }) {
                 renderItem={({item}) => <TodoListView item={item} callBack={deleteTodoList} modalCallBack={updateTodoListsName} navigate={navigateItems}/>}
             />
             
-
             {taskView()}
 
             <Input callBack={createTodoList} title="Ajouter"/>
@@ -115,9 +121,5 @@ const StyleTodoListScreen = StyleSheet.create({
     flatList: {
 
         width: "100%",
-    },
-    flatListContainerStyle: {
-
-        // alignItems: 'center',
-    },
+    }
 })

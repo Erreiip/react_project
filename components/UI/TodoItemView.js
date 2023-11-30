@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { TouchableOpacity, Image, Text, View, StyleSheet, Switch } from 'react-native';
+import { ScrollView, TouchableOpacity, Image, Text, View, StyleSheet, Switch } from 'react-native';
 
 export default function TodoItem(props){
 
@@ -15,41 +15,67 @@ export default function TodoItem(props){
     }, [props.item.done])
 
     return (
-        <View style={styles.content}> 
+        <View style={styles.container}> 
+            <View style={styles.content}> 
             <Switch
                 value={done}
                 onValueChange={toggleSwitch}
             />
-            <Text style={   
-                            [styles.text_item, 
-                            {textDecorationLine: done ? 'line-through' : 'none'}
-                        ]}>
-                {props.item.content}
-            </Text>
-            <TouchableOpacity style={styles.button} onPress={() => props.deleteTodo(props.item.id)}>
+            </View>
+            <View style={styles.content}> 
+                <Text style={{textDecorationLine: done ? 'line-through' : 'none'}}>
+                    {props.item.content}
+                </Text>
+            </View>
+            <View style={styles.content}> 
+            <TouchableOpacity onPress={() => props.deleteTodo(props.item.id)}>
                 <Image
-                    style={styles.logo}
+                    style={styles.trashIcon}
                     source={require('../../assets/trash.png')}
                 />
             </TouchableOpacity>
+            </View>
         </View>
     );
 };
 
+const LIST_HEIGHT = 40;
+
 const styles = StyleSheet.create({
-    content: {
-        flex: 1,
+    container: {
+
+        display: 'flex',
+
+        flex: 2,
         flexDirection: 'row',
-        justifyContents: 'space-around',
+        alignItems: 'center',
+
         marginBottom: 5,
+        paddingBottom: 5,
+        paddingTop: 5,
+
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 10,
     },
-    text_item: {
-        paddingLeft: 50,
-        paddingRight: 50,
+    content: {
+
+        flex: 1,
+        flexDirection: 'column',
+
+        justifyContent: 'center',
+        alignItems: 'center',
+
+        height: LIST_HEIGHT,
+        width: '33%'
     },
-    logo: {
-        paddingLeft: 50,
-        width: 40,
-        height: 40,
+    trashIcon: {
+
+        height: LIST_HEIGHT,
+        width: LIST_HEIGHT,
+
+        backgroundColor : 'red',
+        borderRadius: 10,
     }
+    
 });

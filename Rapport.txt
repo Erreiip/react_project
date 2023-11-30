@@ -9,3 +9,4 @@ Bonus :
 une interface utilisateur agréable et fonctionnelle
 la gestion du second niveau (TodoList et Todo)
 ajout d'une barre de progression indiquant le nombre de tâches réalisées sur le total
+Export/Import via json

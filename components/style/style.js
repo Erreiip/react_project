@@ -17,6 +17,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'column',
   },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   logo: {
     paddingLeft: 0,
     width: 25,
